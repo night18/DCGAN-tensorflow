@@ -286,36 +286,38 @@ class DCGAN(object):
           % (epoch, config.epoch, idx, batch_idxs,
             time.time() - start_time, errD_fake+errD_real, errG))
 
-        if np.mod(counter, 100) == 1:
-          if config.dataset == 'mnist':
-            samples, d_loss, g_loss = self.sess.run(
-              [self.sampler, self.d_loss, self.g_loss],
-              feed_dict={
-                  self.z: sample_z,
-                  self.inputs: sample_inputs,
-                  self.y:sample_labels,
-              }
-            )
-            save_images(samples, image_manifold_size(samples.shape[0]),
-                  './{}/train_{:02d}_{:04d}.png'.format(config.sample_dir, epoch, idx))
-            print("[Sample] d_loss: %.8f, g_loss: %.8f" % (d_loss, g_loss)) 
-          else:
-            try:
-              samples, d_loss, g_loss = self.sess.run(
-                [self.sampler, self.d_loss, self.g_loss],
-                feed_dict={
-                    self.z: sample_z,
-                    self.inputs: sample_inputs,
-                },
-              )
-              save_images(samples, image_manifold_size(samples.shape[0]),
-                    './{}/train_{:02d}_{:04d}.png'.format(config.sample_dir, epoch, idx))
-              print("[Sample] d_loss: %.8f, g_loss: %.8f" % (d_loss, g_loss)) 
-            except:
-              print("one pic error!...")
+      self.save(config.checkpoint_dir, counter)
 
-        if np.mod(counter, 500) == 2:
-          self.save(config.checkpoint_dir, counter)
+# TODO reduce 
+
+    
+      if config.dataset == 'mnist':
+        samples, d_loss, g_loss = self.sess.run(
+          [self.sampler, self.d_loss, self.g_loss],
+          feed_dict={
+              self.z: sample_z,
+              self.inputs: sample_inputs,
+              self.y:sample_labels,
+          }
+        )
+        save_images(samples, image_manifold_size(samples.shape[0]),
+              './{}/train_{:02d}.png'.format(config.sample_dir, epoch))
+        print("[Sample] d_loss: %.8f, g_loss: %.8f" % (d_loss, g_loss)) 
+      else:
+        try:
+          samples, d_loss, g_loss = self.sess.run(
+            [self.sampler, self.d_loss, self.g_loss],
+            feed_dict={
+                self.z: sample_z,
+                self.inputs: sample_inputs,
+            },
+          )
+          save_images(samples, image_manifold_size(samples.shape[0]),
+                './{}/train_{:02d}.png'.format(config.sample_dir, epoch))
+          print("[Sample] d_loss: %.8f, g_loss: %.8f" % (d_loss, g_loss)) 
+        except:
+          print("one pic error!...")
+
 
   def discriminator(self, image, y=None, reuse=False):
     with tf.variable_scope("discriminator") as scope:

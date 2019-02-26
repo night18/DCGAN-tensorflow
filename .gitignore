@@ -1,6 +1,5 @@
 # Data
 data
-samples
 *.zip
 logs
 test*
@@ -8,7 +7,7 @@ test*
 web/js/gen_layers.js
 
 # checkpoint
-checkpoint
+# checkpoint
 
 # trash
 .dropbox
